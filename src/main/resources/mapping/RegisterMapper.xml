@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yhdemo.demo.dao.RegisterMapper">
+
+
+    <insert id="saveUser" parameterType="com.yhdemo.demo.pojo.User">
+        INSERT
+        INTO user_info(username, password, email, gender, birthday)
+        VALUES (#{user.username}, #{user.password}, #{user.email}, #{user.gender}, #{user.birthday})
+    </insert>
+
+    <insert id="saveUserRegisterInfo" parameterType="com.yhdemo.demo.pojo.RegisterUser">
+        INSERT
+        INTO user_register_info(username, register_time, birthday)
+        VALUES (#{registerUser.username}, #{registerUser.registerTime}, #{registerUser.birthday})
+    </insert>
+
+    <select id="getRegisterInfo" resultType="com.yhdemo.demo.pojo.RegisterUser">
+        SELECT username, register_time, birthday
+        FROM user_register_info
+        WHERE username = #{username}
+    </select>
+</mapper>
