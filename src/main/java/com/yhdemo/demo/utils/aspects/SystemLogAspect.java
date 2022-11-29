@@ -2,13 +2,17 @@ package com.yhdemo.demo.utils.aspects;
 
 import com.alibaba.fastjson.JSON;
 import com.yhdemo.demo.pojo.SysLog;
+import com.yhdemo.demo.pojo.param.LoginParam;
 import com.yhdemo.demo.service.LogService;
 import com.yhdemo.demo.utils.DateUtils;
 import com.yhdemo.demo.utils.HttpContextUtils;
 import com.yhdemo.demo.utils.IpUtils;
+import com.yhdemo.demo.utils.JwtUtils;
+import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.AfterThrowing;
@@ -18,7 +22,10 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.annotation.Order;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 /**
  * 日志切点类
@@ -27,10 +34,15 @@ import org.springframework.stereotype.Component;
  */
 @Aspect
 @Component
+@Order(0)
+@Slf4j
 public class SystemLogAspect {
 
     @Resource
     private LogService logService;
+
+    @Resource
+    private RedisTemplate<Object, Object> redisTemplate;
 
     private static final Logger logger = LoggerFactory.getLogger(SystemLogAspect.class);
 
@@ -49,8 +61,8 @@ public class SystemLogAspect {
     @Before("controllerAspect()")
     public void doBefore(JoinPoint joinPoint) {
         HttpServletRequest request = HttpContextUtils.getHttpServletRequest();
-        HttpSession session = request.getSession();
-        String name = (String) session.getAttribute("username");
+        String token = request.getHeader("Authorization");
+        String name = getUsername(token);
         SystemControllerLog systemControllerLog = ((MethodSignature) (joinPoint.getSignature())).getMethod()
                 .getAnnotation(SystemControllerLog.class);
         SysLog sysLog = new SysLog();
@@ -130,5 +142,21 @@ public class SystemLogAspect {
             logger.error("=====异常通知异常=====");
             logger.error("异常信息:{}", ex.getMessage());
         }
+    }
+
+    public String getUsername(String token){
+        Map<String, Object> map = JwtUtils.verifyToken(token);
+        if (map == null){
+            return null;
+        }
+
+        String userJson = (String) redisTemplate.opsForValue().get("TOKEN_" + token);
+        log.info(userJson);
+        if (!(StringUtils.hasText(userJson))){
+            return null;
+        }
+        LoginParam loginParam = JSON.parseObject(userJson, LoginParam.class);
+        log.info(String.valueOf(loginParam));
+        return loginParam.getUsername();
     }
 }

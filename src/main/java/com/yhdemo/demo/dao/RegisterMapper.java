@@ -2,6 +2,8 @@ package com.yhdemo.demo.dao;
 
 import com.yhdemo.demo.pojo.RegisterUser;
 import com.yhdemo.demo.pojo.User;
+import com.yhdemo.demo.pojo.param.RegisterParam;
+import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -34,4 +36,12 @@ public interface RegisterMapper {
      * @return 注册信息视图类
      */
     RegisterUser getRegisterInfo(String username);
+
+    /**
+     *
+     * @param list
+     * @return
+     */
+    boolean updateUsers(List<RegisterParam> list);
+
 }

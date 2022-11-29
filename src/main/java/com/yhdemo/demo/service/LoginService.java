@@ -1,5 +1,6 @@
 package com.yhdemo.demo.service;
 
+import com.yhdemo.demo.pojo.User;
 import com.yhdemo.demo.pojo.param.LoginParam;
 import com.yhdemo.demo.vo.Result;
 
@@ -17,4 +18,12 @@ public interface LoginService {
      */
     Result doLogin(LoginParam loginParam);
 
+    /**
+     *
+     * @param token
+     * @return
+     */
+    LoginParam checkToken(String token);
+
+    Result logout(String token);
 }

@@ -2,6 +2,7 @@ package com.yhdemo.demo.service;
 
 import com.yhdemo.demo.pojo.param.RegisterParam;
 import com.yhdemo.demo.vo.Result;
+import java.util.List;
 
 /**
  * 注册业务service
@@ -23,4 +24,6 @@ public interface RegisterService {
      * @return 通用返回
      */
     Result getRegisterInfo(String username);
+
+    Result updateUsers(List<RegisterParam> list);
 }

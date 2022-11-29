@@ -9,6 +9,7 @@ import com.yhdemo.demo.vo.Result;
 import com.yhdemo.demo.vo.UserVo;
 import java.util.List;
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Service;
 
 /**
@@ -35,5 +36,11 @@ public class FindServiceImpl implements FindService {
         result.getRecords().forEach(System.out::println);
         List<UserVo> records = result.getRecords();
         return Result.success(records);
+    }
+
+    @Override
+    public List<UserVo> findAllUserToExcel(HttpServletResponse response) {
+        Page<UserVo> page = new Page<>(2, 3, true);
+        return findMapper.findAll(page).getRecords();
     }
 }

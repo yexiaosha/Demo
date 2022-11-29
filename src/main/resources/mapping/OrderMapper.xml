@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yhdemo.demo.dao.OrderMapper">
+
+    <resultMap id="OrderVoMap2" type="com.yhdemo.demo.vo.OrderVo">
+        <result column="username" property="username" jdbcType="VARCHAR"></result>
+        <result column="email" property="email" jdbcType="VARCHAR"></result>
+        <result column="gender" property="gender" jdbcType="INTEGER" typeHandler="com.yhdemo.demo.handler.SexEnumToIntegerHandler" ></result>
+        <result column="birthday" property="birthday" jdbcType="DATE" javaType="java.util.Date"></result>
+        <collection property="orderList" ofType="com.yhdemo.demo.pojo.Order" javaType="java.util.List">
+            <id column="id" property="id" jdbcType="INTEGER"></id>
+            <result column="username" property="username" jdbcType="VARCHAR" ></result>
+            <result column="order_name" property="orderName" jdbcType="VARCHAR" ></result>
+            <result column="time" property="time" jdbcType="DATE"></result>
+            <result column="order_content" property="orderContent" jdbcType="VARCHAR"></result>
+            <result column="order_number" property="orderNumber" jdbcType="CHAR"></result>
+        </collection>
+    </resultMap>
+
+    <resultMap id="OrderVoMap" type="com.yhdemo.demo.vo.OrderVo">
+        <result column="username" property="username" jdbcType="VARCHAR"></result>
+        <result column="email" property="email" jdbcType="VARCHAR"></result>
+        <result column="gender" property="gender" jdbcType="INTEGER" typeHandler="com.yhdemo.demo.handler.SexEnumToIntegerHandler" ></result>
+        <result column="birthday" property="birthday" jdbcType="DATE" javaType="java.util.Date"></result>
+        <collection column="{username = username}" property="orderList"  ofType="com.yhdemo.demo.pojo.Order" select="findOrderMap">
+
+        </collection>
+    </resultMap>
+
+    <resultMap type="com.yhdemo.demo.pojo.Order" id="OrderMap">
+        <id column="id" property="id" jdbcType="INTEGER"></id>
+        <result column="username" property="username" jdbcType="VARCHAR" ></result>
+        <result column="order_name" property="orderName" jdbcType="VARCHAR" ></result>
+        <result column="time" property="time" jdbcType="DATE"></result>
+        <result column="order_content" property="orderContent" jdbcType="VARCHAR"></result>
+        <result column="order_number" property="orderNumber" jdbcType="CHAR"></result>
+    </resultMap>
+
+    <insert id="insertOrder" parameterType="com.yhdemo.demo.pojo.Order" useGeneratedKeys="true" keyProperty="id">
+        INSERT
+        INTO order_info(username, order_name, time, order_content, order_number)
+        VALUES (#{order.username}, #{order.orderName}, #{order.time}, #{order.orderContent}, #{order.orderNumber})
+    </insert>
+
+    <select id="findAllOrderByUsername" resultMap="OrderVoMap" >
+        SELECT user_info.username, user_info.email, user_info.gender, user_info.birthday from user_info
+    </select>
+
+    <select id="findOrderMap" resultType="com.yhdemo.demo.pojo.Order">
+        SELECT * from order_info WHERE username = #{username}
+    </select>
+
+    <select id="findAllOrderByPage" resultMap="OrderVoMap2">
+        SELECT user_info.username AS uname, user_info.email, user_info.gender, user_info.birthday,order_info.* FROM order_info
+        LEFT JOIN user_info
+        ON user_info.username = order_info.username
+    </select>
+</mapper>

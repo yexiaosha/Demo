@@ -14,6 +14,7 @@ import com.yhdemo.demo.vo.ErrorCode;
 import com.yhdemo.demo.vo.RegisterUserVo;
 import com.yhdemo.demo.vo.Result;
 import java.util.Date;
+import java.util.List;
 import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 
@@ -90,6 +91,17 @@ public class RegisterServiceImpl implements RegisterService {
 
         RegisterUserVo registerUserVo = copy(registerMapper.getRegisterInfo(username));
         return Result.success(registerUserVo);
+    }
+
+    @Override
+    public Result updateUsers(List<RegisterParam> list) {
+        for (RegisterParam user:list){
+            user.setRegisterTime(DateUtils.getPresentTime());
+        }
+        if (!registerMapper.updateUsers(list)){
+            return Result.fail(ErrorCode.PARAMS_ERROR.getCode(), ErrorCode.PARAMS_ERROR.getMsg());
+        }
+        return Result.success();
     }
 
     public RegisterUserVo copy(RegisterUser registerUser) {

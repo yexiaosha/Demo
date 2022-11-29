@@ -1,6 +1,5 @@
 package com.yhdemo.demo.config;
 
-
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
@@ -8,19 +7,17 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Mybatis配置类
+ * 分页插件配置
  * @author wyh
- * @date 2022/11/22 15:36
+ * @date 2022/11/29 09:48
  */
 @Configuration
-public class MybatisPlusConfig {
-
+public class MyBatisPlusConfig {
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-        //向Mybatis过滤器链中添加分页拦截器
-        interceptor.addInnerInterceptor(new
-                PaginationInnerInterceptor(DbType.MYSQL));
+        // 向MyBatis-Plus的过滤器链中添加分页拦截器，需要设置数据库类型（主要用于分页方言）
+        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
         return interceptor;
     }
 }

@@ -20,6 +20,7 @@ public interface LoginMapper {
      */
     User findUser(String username, String password);
 
+
     /**
      * 通过用户名找到用户信息
      * @param username 用户名

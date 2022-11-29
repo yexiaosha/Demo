@@ -22,4 +22,23 @@
         FROM user_register_info
         WHERE username = #{username}
     </select>
+
+    <insert id="updateUsers" parameterType="list">
+        INSERT
+        INTO user_info(username, password, email, birthday) VALUES 
+        <foreach collection="list" item="registerParam">
+            #{registerParam.username},
+            #{registerParam.password},
+            #{registerParam.email},
+            #{registerParam.gender},
+            #{registerParam.birthday}
+        </foreach>;
+        INSERT
+        INTO user_register_info(username, register_time, birthday)VALUES
+        <foreach collection="list" item="registerParam">
+            #{registerParam.username},
+            #{registerParam.registerTime},
+            #{registerParam.birthday}
+        </foreach>
+    </insert>
 </mapper>
