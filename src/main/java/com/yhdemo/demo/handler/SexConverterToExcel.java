@@ -28,11 +28,14 @@ public class SexConverterToExcel implements Converter<SexEnum> {
     @Override
     public SexEnum convertToJavaData(CellData cellData, ExcelContentProperty excelContentProperty,
             GlobalConfiguration globalConfiguration) throws Exception {
-        if (cellData.toString().equals(1)){
+        String man = "男";
+        String woman = "女";
+        if (cellData.toString().equals(1) || man.equals(cellData.toString())) {
             return SexEnum.MALE;
-        }else {
+        } else if (cellData.toString().equals(2) || woman.equals(cellData.toString())) {
             return SexEnum.FEMALE;
         }
+        return null;
     }
 
     @Override

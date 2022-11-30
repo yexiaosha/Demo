@@ -1,6 +1,5 @@
 package com.yhdemo.demo.service.impl;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yhdemo.demo.dao.OrderMapper;
 import com.yhdemo.demo.pojo.Order;
@@ -12,7 +11,6 @@ import com.yhdemo.demo.utils.aspects.SystemServiceLog;
 import com.yhdemo.demo.vo.ErrorCode;
 import com.yhdemo.demo.vo.OrderVo;
 import com.yhdemo.demo.vo.Result;
-import java.util.List;
 import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

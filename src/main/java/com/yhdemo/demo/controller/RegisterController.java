@@ -1,7 +1,11 @@
 package com.yhdemo.demo.controller;
 
 import com.alibaba.excel.EasyExcel;
+import com.alibaba.fastjson.JSON;
 import com.yhdemo.demo.handler.UploadDataListener;
+import com.yhdemo.demo.pojo.ExcelCheckErr;
+import com.yhdemo.demo.pojo.RegisterUser;
+import com.yhdemo.demo.pojo.UserRegisterErr;
 import com.yhdemo.demo.pojo.param.RegisterParam;
 import com.yhdemo.demo.service.RegisterService;
 import com.yhdemo.demo.utils.DateUtils;
@@ -9,7 +13,10 @@ import com.yhdemo.demo.utils.aspects.SystemControllerLog;
 import com.yhdemo.demo.vo.Result;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import org.springframework.validation.annotation.Validated;
@@ -63,12 +70,22 @@ public class RegisterController {
 
     @PostMapping("/upload")
     @SystemControllerLog("通过表格上传批量用户信息")
-    public Result uploadUserInfoByExcel(@RequestPart("file") MultipartFile[] files) throws IOException {
-        for (MultipartFile file:files){
-            System.out.println(file.getSize());
+    public Result uploadUserInfoByExcel(HttpServletResponse response, @RequestPart("file") MultipartFile[] files)
+            throws IOException {
+        for (MultipartFile file : files) {
             InputStream inputStream = file.getInputStream();
-            System.out.println(inputStream.getClass());
-            EasyExcel.read(inputStream, RegisterParam.class, new UploadDataListener(registerService)).sheet().headRowNumber(1).doRead();
+            UploadDataListener listener = new UploadDataListener(registerService);
+            EasyExcel.read(inputStream, RegisterUser.class, listener).sheet().doRead();
+            List<ExcelCheckErr<RegisterUser>> errList = listener.getErrList();
+            if (!errList.isEmpty()) {
+                List<UserRegisterErr> excelErrs = errList.stream().map(excelCheckErr -> {
+                    UserRegisterErr userRegisterErr = JSON.parseObject(JSON.toJSONString(excelCheckErr.getT()),
+                            UserRegisterErr.class);
+                    userRegisterErr.setErrMsg(excelCheckErr.getErrMessage());
+                    return userRegisterErr;
+                }).collect(Collectors.toList());
+                EasyExcel.write(response.getOutputStream(), UserRegisterErr.class).sheet("错误信息表").doWrite(excelErrs);
+            }
         }
         return Result.success();
     }
