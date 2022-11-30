@@ -3,6 +3,8 @@ package com.yhdemo.demo.service.impl;
 import com.mysql.cj.util.StringUtils;
 import com.yhdemo.demo.dao.LoginMapper;
 import com.yhdemo.demo.dao.RegisterMapper;
+import com.yhdemo.demo.pojo.ExcelCheckErr;
+import com.yhdemo.demo.pojo.ExcelCheckResult;
 import com.yhdemo.demo.pojo.RegisterUser;
 import com.yhdemo.demo.pojo.SexEnum;
 import com.yhdemo.demo.pojo.User;
@@ -13,6 +15,8 @@ import com.yhdemo.demo.utils.aspects.SystemServiceLog;
 import com.yhdemo.demo.vo.ErrorCode;
 import com.yhdemo.demo.vo.RegisterUserVo;
 import com.yhdemo.demo.vo.Result;
+import io.netty.util.internal.StringUtil;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.Resource;
@@ -93,12 +97,18 @@ public class RegisterServiceImpl implements RegisterService {
         return Result.success(registerUserVo);
     }
 
+    /**
+     * 从表格上传用户
+     * @param list 分段处理的用户列表
+     * @return 通用返回
+     */
     @Override
-    public Result updateUsers(List<RegisterParam> list) {
-        for (RegisterParam user:list){
+    @SystemServiceLog("从表格上传用户")
+    public Result updateUsers(List<RegisterUser> list) {
+        for (RegisterUser user : list) {
             user.setRegisterTime(DateUtils.getPresentTime());
         }
-        if (!registerMapper.updateUsers(list)){
+        if (!registerMapper.updateUsers(list)) {
             return Result.fail(ErrorCode.PARAMS_ERROR.getCode(), ErrorCode.PARAMS_ERROR.getMsg());
         }
         return Result.success();
@@ -110,5 +120,31 @@ public class RegisterServiceImpl implements RegisterService {
         registerUserVo.setRegisterTime(DateUtils.parseToString(registerUser.getRegisterTime()));
         registerUserVo.setBirthday(DateUtils.parseToString(registerUser.getBirthday()));
         return registerUserVo;
+    }
+
+    /**
+     * 非正则表达式法校验
+     * @param objects 校验对象
+     * @return 表格结果
+     */
+    @Override
+    public ExcelCheckResult checkImportExcel(List<RegisterUser> objects) {
+        List<RegisterUser> successList = new ArrayList<>();
+        List<ExcelCheckErr<RegisterUser>> errList = new ArrayList<>();
+        for (RegisterUser user : objects) {
+            StringBuilder errMsg = new StringBuilder();
+            if (loginMapper.findUserByUsername(user.getUsername()) != null) {
+                errMsg.append("用户名重复了").append(";");
+            }
+            if (user.getGender() == null) {
+                errMsg.append("性别信息有误").append(";");
+            }
+            if (StringUtil.isNullOrEmpty(errMsg.toString())) {
+                successList.add(user);
+            } else {
+                errList.add(new ExcelCheckErr<>(user, errMsg.toString()));
+            }
+        }
+        return new ExcelCheckResult(successList, errList);
     }
 }

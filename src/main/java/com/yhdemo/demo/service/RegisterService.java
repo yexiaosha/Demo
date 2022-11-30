@@ -1,5 +1,6 @@
 package com.yhdemo.demo.service;
 
+import com.yhdemo.demo.pojo.RegisterUser;
 import com.yhdemo.demo.pojo.param.RegisterParam;
 import com.yhdemo.demo.vo.Result;
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.List;
  * @author wyh
  * @data 2022/11/18 14:20
  */
-public interface RegisterService {
+public interface RegisterService extends ExcelCheckManager<RegisterUser> {
 
     /**
      * 将注册字段传入数据库
@@ -25,5 +26,10 @@ public interface RegisterService {
      */
     Result getRegisterInfo(String username);
 
-    Result updateUsers(List<RegisterParam> list);
+    /**
+     * 批量上传用户信息
+     * @param list
+     * @return 通用返回
+     */
+    Result updateUsers(List<RegisterUser> list);
 }
