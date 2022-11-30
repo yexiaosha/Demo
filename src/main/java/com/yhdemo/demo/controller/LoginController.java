@@ -42,6 +42,7 @@ public class LoginController {
     }
 
     @GetMapping("/logout")
+    @SystemControllerLog("用户登出")
     public Result logout(@RequestHeader("Authorization") String token){
         return loginService.logout(token);
     }

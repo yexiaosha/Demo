@@ -62,16 +62,15 @@ public class LoginServiceImpl implements LoginService {
             return null;
         }
         String userJson = redisTemplate.opsForValue().get("TOKEN_" + token);
-        log.info(userJson);
         if (!(StringUtils.hasText(userJson))){
             return null;
         }
         LoginParam loginParam = JSON.parseObject(userJson, LoginParam.class);
-        log.info(String.valueOf(loginParam));
         return loginParam;
     }
 
     @Override
+    @SystemServiceLog("用户登出")
     public Result logout(String token) {
         redisTemplate.delete("TOKEN_"+token);
         return Result.success();

@@ -15,7 +15,7 @@ import lombok.EqualsAndHashCode;
 public class UserRegisterErr extends RegisterUser {
 
     @ExcelProperty(value = "错误信息", index = 5)
-    @ColumnWidth(32)
+    @ColumnWidth(100)
     private String errMsg;
 
 }
