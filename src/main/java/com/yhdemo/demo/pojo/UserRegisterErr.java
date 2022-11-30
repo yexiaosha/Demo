@@ -1,7 +1,10 @@
 package com.yhdemo.demo.pojo;
 
 import com.alibaba.excel.annotation.ExcelProperty;
+<<<<<<< HEAD
 import com.alibaba.excel.annotation.write.style.ColumnWidth;
+=======
+>>>>>>> origin/master
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -15,7 +18,10 @@ import lombok.EqualsAndHashCode;
 public class UserRegisterErr extends RegisterUser {
 
     @ExcelProperty(value = "错误信息", index = 5)
+<<<<<<< HEAD
     @ColumnWidth(32)
+=======
+>>>>>>> origin/master
     private String errMsg;
 
 }
