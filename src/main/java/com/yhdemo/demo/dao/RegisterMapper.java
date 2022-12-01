@@ -37,8 +37,9 @@ public interface RegisterMapper {
     RegisterUser getRegisterInfo(String username);
 
     /**
-     * @param list
-     * @return
+     * 批量上传用户
+     * @param list 用户列表
+     * @return 是否完成
      */
     boolean updateUsers(List<RegisterUser> list);
 

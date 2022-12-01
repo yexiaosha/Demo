@@ -1,9 +1,11 @@
 package com.yhdemo.demo.controller;
 
+import com.yhdemo.demo.pojo.PageData;
 import com.yhdemo.demo.pojo.param.OrderParam;
+import com.yhdemo.demo.pojo.vo.OrderVo;
+import com.yhdemo.demo.pojo.vo.Result;
 import com.yhdemo.demo.service.OrderService;
 import com.yhdemo.demo.utils.aspects.SystemControllerLog;
-import com.yhdemo.demo.vo.Result;
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
@@ -30,13 +32,14 @@ public class OrderController {
 
     @PostMapping("/create")
     @SystemControllerLog("生成订单")
-    public Result createOrder(@RequestBody OrderParam orderParam){
+    public Result<Boolean> createOrder(@RequestBody OrderParam orderParam) {
         return orderService.createOrder(orderParam);
     }
 
     @GetMapping("/findAll")
-    @SystemControllerLog("根据用户名分页查找用户")
-    public Result findOrderListByUsername(@RequestHeader @NotNull int pageNum, @RequestHeader @NotNull int pageSize){
-        return orderService.findAllOrderByUsername(pageNum, pageSize);
+    @SystemControllerLog("根据用户名分页查找订单")
+    public Result<PageData<OrderVo>> findOrderList(@RequestHeader @NotNull int pageNum,
+            @RequestHeader @NotNull int pageSize) {
+        return orderService.findAllOrders(pageNum, pageSize);
     }
 }

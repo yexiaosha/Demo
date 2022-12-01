@@ -10,7 +10,6 @@ public class UUIDUtils {
         int front = (int) (Math.random()*(10));
         int behind = (int) (Math.random()*(10));
         long now = System.currentTimeMillis();
-        String paymentId = String.valueOf(front) + String.valueOf(behind) + String.valueOf(now);
-        return paymentId;
+        return String.valueOf(front) + behind + now;
     }
 }

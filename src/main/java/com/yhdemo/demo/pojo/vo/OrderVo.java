@@ -1,4 +1,4 @@
-package com.yhdemo.demo.vo;
+package com.yhdemo.demo.pojo.vo;
 
 import com.yhdemo.demo.pojo.Order;
 import com.yhdemo.demo.pojo.SexEnum;

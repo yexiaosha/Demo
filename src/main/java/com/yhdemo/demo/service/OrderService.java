@@ -1,7 +1,9 @@
 package com.yhdemo.demo.service;
 
+import com.yhdemo.demo.pojo.PageData;
 import com.yhdemo.demo.pojo.param.OrderParam;
-import com.yhdemo.demo.vo.Result;
+import com.yhdemo.demo.pojo.vo.OrderVo;
+import com.yhdemo.demo.pojo.vo.Result;
 
 /**
  * 订单业务接口
@@ -15,21 +17,21 @@ public interface OrderService {
      * @param orderParam 订单参数
      * @return 通用返回结果
      */
-    Result createOrder(OrderParam orderParam);
+    Result<Boolean> createOrder(OrderParam orderParam);
 
     /**
      * 分页查找
-     * @param pageNum 分页查找
+     * @param pageNum  分页查找
      * @param pageSize 分页查找
      * @return 通用返回结果
      */
-    Result findAllOrderByUsername(int pageNum, int pageSize);
+    Result<PageData<OrderVo>> findAllOrders(int pageNum, int pageSize);
 
     /**
      * 分页查找
-     * @param pageNum 分页查找
+     * @param pageNum  分页查找
      * @param pageSize 分页查找
      * @return 通用返回结果
      */
-    Result findAllOrders(int pageNum, int pageSize);
+    Result<PageData<OrderVo>> findAllOrdersByPage(int pageNum, int pageSize);
 }

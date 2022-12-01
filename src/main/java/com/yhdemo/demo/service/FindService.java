@@ -1,7 +1,8 @@
 package com.yhdemo.demo.service;
 
-import com.yhdemo.demo.vo.Result;
-import com.yhdemo.demo.vo.UserVo;
+import com.yhdemo.demo.pojo.PageData;
+import com.yhdemo.demo.pojo.vo.Result;
+import com.yhdemo.demo.pojo.vo.UserVo;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
@@ -16,11 +17,12 @@ public interface FindService {
      * 获取所有用户接口
      * @return 通用结果
      */
-    Result findAll();
+    Result<PageData<UserVo>> findAll();
 
     /**
-     *
-     * @return
+     * 获取所有用户输出表格文件
+     * @param response 相应
+     * @return 用户列表
      */
     List<UserVo> findAllUserToExcel(HttpServletResponse response);
 }

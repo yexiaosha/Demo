@@ -3,10 +3,12 @@ package com.yhdemo.demo.service.impl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yhdemo.demo.dao.FindMapper;
+import com.yhdemo.demo.pojo.PageData;
+import com.yhdemo.demo.pojo.vo.Result;
+import com.yhdemo.demo.pojo.vo.UserVo;
 import com.yhdemo.demo.service.FindService;
+import com.yhdemo.demo.utils.ResultUtils;
 import com.yhdemo.demo.utils.aspects.SystemServiceLog;
-import com.yhdemo.demo.vo.Result;
-import com.yhdemo.demo.vo.UserVo;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -30,17 +32,16 @@ public class FindServiceImpl implements FindService {
      */
     @Override
     @SystemServiceLog("获取所有用户")
-    public Result findAll() {
+    public Result<PageData<UserVo>> findAll() {
         Page<UserVo> page = new Page<>(2, 3, true);
         IPage<UserVo> result = findMapper.findAll(page);
-        result.getRecords().forEach(System.out::println);
-        List<UserVo> records = result.getRecords();
-        return Result.success(records);
+        return ResultUtils.success(new PageData<>(result.getRecords()));
     }
 
     @Override
+    @SystemServiceLog("获取所有用户输出表格文件")
     public List<UserVo> findAllUserToExcel(HttpServletResponse response) {
-        Page<UserVo> page = new Page<>(2, 3, true);
+        Page<UserVo> page = new Page<>(1, 20, true);
         return findMapper.findAll(page).getRecords();
     }
 }

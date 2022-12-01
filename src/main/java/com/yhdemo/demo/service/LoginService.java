@@ -1,8 +1,7 @@
 package com.yhdemo.demo.service;
 
-import com.yhdemo.demo.pojo.User;
 import com.yhdemo.demo.pojo.param.LoginParam;
-import com.yhdemo.demo.vo.Result;
+import com.yhdemo.demo.pojo.vo.Result;
 
 /**
  * 登录业务service层接口
@@ -16,14 +15,19 @@ public interface LoginService {
      * @param loginParam 用户对象
      * @return 通用返回
      */
-    Result doLogin(LoginParam loginParam);
+    Result<String> doLogin(LoginParam loginParam);
 
     /**
-     *
-     * @param token
-     * @return
+     * 用户token检查
+     * @param token 令牌
+     * @return 用户名
      */
-    LoginParam checkToken(String token);
+    String checkToken(String token);
 
-    Result logout(String token);
+    /**
+     * 用户登出
+     * @param token 令牌
+     * @return 通用结果
+     */
+    Result<Boolean> logout(String token);
 }

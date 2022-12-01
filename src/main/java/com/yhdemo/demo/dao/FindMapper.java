@@ -1,7 +1,7 @@
 package com.yhdemo.demo.dao;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.yhdemo.demo.vo.UserVo;
+import com.yhdemo.demo.pojo.vo.UserVo;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

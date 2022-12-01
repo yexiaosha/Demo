@@ -1,4 +1,4 @@
-package com.yhdemo.demo.vo;
+package com.yhdemo.demo.pojo.vo;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;

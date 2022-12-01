@@ -16,5 +16,5 @@ public interface ExcelCheckManager<T> {
      * @param objects 校验对象
      * @return 校验结果
      */
-    ExcelCheckResult checkImportExcel(List<T> objects);
+    ExcelCheckResult<T> checkImportExcel(List<T> objects);
 }

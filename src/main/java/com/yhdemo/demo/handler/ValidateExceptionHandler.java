@@ -1,7 +1,8 @@
 package com.yhdemo.demo.handler;
 
-import com.yhdemo.demo.vo.ErrorCode;
-import com.yhdemo.demo.vo.Result;
+import com.yhdemo.demo.pojo.vo.ErrorCode;
+import com.yhdemo.demo.pojo.vo.Result;
+import com.yhdemo.demo.utils.ResultUtils;
 import javax.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
@@ -26,25 +27,25 @@ public class ValidateExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BindException.class)
-    public Result validateErrorHandler(BindException e) {
+    public Result<Boolean> validateErrorHandler(BindException e) {
         ObjectError error = e.getAllErrors().get(0);
         log.info("数据验证异常：{}", error.getDefaultMessage());
-        return Result.fail(ErrorCode.PARAMS_ERROR.getCode(), ErrorCode.PARAMS_ERROR.getMsg());
+        return ResultUtils.fail(ErrorCode.PARAMS_ERROR.getCode(), ErrorCode.PARAMS_ERROR.getMsg());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Result validateErrorHandler(MethodArgumentNotValidException e) {
+    public Result<Boolean> validateErrorHandler(MethodArgumentNotValidException e) {
         ObjectError error = e.getAllErrors().get(0);
         log.info("数据验证错误：{}", error.getDefaultMessage());
-        return Result.fail(ErrorCode.PARAMS_ERROR.getCode(), ErrorCode.PARAMS_ERROR.getMsg());
+        return ResultUtils.fail(ErrorCode.PARAMS_ERROR.getCode(), ErrorCode.PARAMS_ERROR.getMsg());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ConstraintViolationException.class)
-    public Result validateErrorHandler(ConstraintViolationException e) {
+    public Result<Boolean> validateErrorHandler(ConstraintViolationException e) {
         log.info("数据验证异常：", e);
-        return Result.fail(ErrorCode.PARAMS_ERROR.getCode(), ErrorCode.PARAMS_ERROR.getMsg());
+        return ResultUtils.fail(ErrorCode.PARAMS_ERROR.getCode(), ErrorCode.PARAMS_ERROR.getMsg());
     }
 
 }

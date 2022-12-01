@@ -1,5 +1,6 @@
 package com.yhdemo.demo.handler;
 
+import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
@@ -9,16 +10,23 @@ import com.yhdemo.demo.handler.validator.ExcelValidatorHelper;
 import com.yhdemo.demo.pojo.ExcelCheckErr;
 import com.yhdemo.demo.pojo.ExcelCheckResult;
 import com.yhdemo.demo.pojo.RegisterUser;
+import com.yhdemo.demo.pojo.UserRegisterErr;
 import com.yhdemo.demo.service.RegisterService;
 import io.netty.util.internal.StringUtil;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * 读取excel监听器
@@ -27,14 +35,18 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Data
-public class UploadDataListener<T> extends AnalysisEventListener<RegisterUser> {
+@EqualsAndHashCode(callSuper = false)
+public class UploadDataListener<T> extends AnalysisEventListener<T> {
 
-    private static final int BATCH_COUNT = 5;
+    @Value("${uploadfile.max-error-file}")
+    private static int BATCH_COUNT;
+    @Value("${uploadfile.max-load-data}")
+    private static int MAX_ERROR;
 
     private List<T> successList = new ArrayList<>();
     private List<ExcelCheckErr<T>> errList = new ArrayList<>();
 
-    List<RegisterUser> list = new ArrayList<>();
+    List<T> list = new ArrayList<>();
     private RegisterService registerService;
 
     private Class<T> clazz;
@@ -43,41 +55,44 @@ public class UploadDataListener<T> extends AnalysisEventListener<RegisterUser> {
         this.registerService = registerService;
     }
 
-    public UploadDataListener(RegisterService registerService, Class<T> clazz) {
-        this.registerService = registerService;
-        this.clazz = clazz;
-    }
-
     @Override
-    public void invoke(RegisterUser registerUser, AnalysisContext analysisContext) {
-        log.info("解析到一条数据：{}", JSON.toJSONString(registerUser));
+    public void invoke(T t, AnalysisContext analysisContext) {
+        log.info("解析到一条数据：{}", JSON.toJSONString(t));
         String errMsg;
         try {
-            errMsg = ExcelValidatorHelper.validateEntity(registerUser);
+            errMsg = ExcelValidatorHelper.validateEntity(t);
         } catch (NoSuchFieldException e) {
             errMsg = "解析数据出错";
             log.error(errMsg, e);
         }
 
         if (!StringUtil.isNullOrEmpty(errMsg)) {
-            ExcelCheckErr excelCheckErr = new ExcelCheckErr(registerUser, errMsg);
+            ExcelCheckErr<T> excelCheckErr = new ExcelCheckErr<>(t, errMsg);
             errList.add(excelCheckErr);
         } else {
-            list.add(registerUser);
+            list.add(t);
         }
 
         if (list.size() >= BATCH_COUNT) {
-            ExcelCheckResult result = registerService.checkImportExcel(list);
+            ExcelCheckResult<T> result = (ExcelCheckResult<T>) registerService.checkImportExcel(
+                    (List<RegisterUser>) list);
             successList.addAll(result.getSuccesses());
             errList.addAll(result.getErrs());
             saveData(successList);
+            try {
+                outPutErrorExcel(errList);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            successList.clear();
+            errList.clear();
             list.clear();
         }
     }
 
     @Override
     public void doAfterAllAnalysed(AnalysisContext analysisContext) {
-        ExcelCheckResult result = registerService.checkImportExcel(list);
+        ExcelCheckResult<T> result = (ExcelCheckResult<T>) registerService.checkImportExcel((List<RegisterUser>) list);
         successList.addAll(result.getSuccesses());
         errList.addAll(result.getErrs());
         saveData(successList);
@@ -107,7 +122,7 @@ public class UploadDataListener<T> extends AnalysisEventListener<RegisterUser> {
     }
 
     private Map<Integer, String> getIndexNameMap(Class clazz) throws NoSuchFieldException {
-        Map<Integer, String> result = new HashMap<>();
+        Map<Integer, String> result = new HashMap<>(20);
         Field field;
         Field[] fields = clazz.getDeclaredFields();
 
@@ -134,4 +149,19 @@ public class UploadDataListener<T> extends AnalysisEventListener<RegisterUser> {
             log.info("操作完成");
         }
     }
+
+
+    private void outPutErrorExcel(List<ExcelCheckErr<T>> errList) throws IOException {
+        OutputStream outputStream = new FileOutputStream("D:/Temp");
+        if (errList.size() >= MAX_ERROR) {
+            List<UserRegisterErr> excelErrs = errList.stream().map(excelCheckErr -> {
+                UserRegisterErr userRegisterErr = JSON.parseObject(JSON.toJSONString(excelCheckErr.getT()),
+                        UserRegisterErr.class);
+                userRegisterErr.setErrMsg(excelCheckErr.getErrMessage());
+                return userRegisterErr;
+            }).collect(Collectors.toList());
+            EasyExcel.write(outputStream, UserRegisterErr.class).sheet("错误信息表").doWrite(excelErrs);
+        }
+    }
+
 }

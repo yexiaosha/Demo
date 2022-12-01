@@ -1,6 +1,7 @@
 package com.yhdemo.demo.handler;
 
-import com.yhdemo.demo.vo.Result;
+import com.yhdemo.demo.pojo.vo.Result;
+import com.yhdemo.demo.utils.ResultUtils;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -20,8 +21,8 @@ public class AllExceptionHandler {
      * @return 异常返回类型
      */
     @ExceptionHandler(Exception.class)
-    public Result doException(Exception ex) {
+    public Result<Boolean> doException(Exception ex) {
         ex.printStackTrace();
-        return Result.fail("-9999", "系统异常");
+        return ResultUtils.fail("-9999", "系统异常");
     }
 }

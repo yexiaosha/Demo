@@ -39,7 +39,4 @@ public class LogCostFilter implements Filter {
         Filter.super.destroy();
     }
 
-    public static long getTime() {
-        return time;
-    }
 }

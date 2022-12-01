@@ -4,27 +4,30 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.yhdemo.demo.dao.OrderMapper">
 
-    <resultMap id="OrderVoMap2" type="com.yhdemo.demo.vo.OrderVo">
+    <resultMap id="OrderVoMap2" type="com.yhdemo.demo.pojo.vo.OrderVo">
         <result column="username" property="username" jdbcType="VARCHAR"></result>
         <result column="email" property="email" jdbcType="VARCHAR"></result>
-        <result column="gender" property="gender" jdbcType="INTEGER" typeHandler="com.yhdemo.demo.handler.SexEnumToIntegerHandler" ></result>
+        <result column="gender" property="gender" jdbcType="INTEGER"
+                typeHandler="com.yhdemo.demo.handler.SexEnumToIntegerHandler"></result>
         <result column="birthday" property="birthday" jdbcType="DATE" javaType="java.util.Date"></result>
         <collection property="orderList" ofType="com.yhdemo.demo.pojo.Order" javaType="java.util.List">
             <id column="id" property="id" jdbcType="INTEGER"></id>
-            <result column="username" property="username" jdbcType="VARCHAR" ></result>
-            <result column="order_name" property="orderName" jdbcType="VARCHAR" ></result>
+            <result column="username" property="username" jdbcType="VARCHAR"></result>
+            <result column="order_name" property="orderName" jdbcType="VARCHAR"></result>
             <result column="time" property="time" jdbcType="DATE"></result>
             <result column="order_content" property="orderContent" jdbcType="VARCHAR"></result>
             <result column="order_number" property="orderNumber" jdbcType="CHAR"></result>
         </collection>
     </resultMap>
 
-    <resultMap id="OrderVoMap" type="com.yhdemo.demo.vo.OrderVo">
+    <resultMap id="OrderVoMap" type="com.yhdemo.demo.pojo.vo.OrderVo">
         <result column="username" property="username" jdbcType="VARCHAR"></result>
         <result column="email" property="email" jdbcType="VARCHAR"></result>
-        <result column="gender" property="gender" jdbcType="INTEGER" typeHandler="com.yhdemo.demo.handler.SexEnumToIntegerHandler" ></result>
+        <result column="gender" property="gender" jdbcType="INTEGER"
+                typeHandler="com.yhdemo.demo.handler.SexEnumToIntegerHandler"></result>
         <result column="birthday" property="birthday" jdbcType="DATE" javaType="java.util.Date"></result>
-        <collection column="{username = username}" property="orderList"  ofType="com.yhdemo.demo.pojo.Order" select="findOrderMap">
+        <collection column="{username = username}" property="orderList" ofType="com.yhdemo.demo.pojo.Order"
+                select="findOrderMap">
 
         </collection>
     </resultMap>
@@ -44,8 +47,9 @@
         VALUES (#{order.username}, #{order.orderName}, #{order.time}, #{order.orderContent}, #{order.orderNumber})
     </insert>
 
-    <select id="findAllOrderByUsername" resultMap="OrderVoMap" >
-        SELECT user_info.username, user_info.email, user_info.gender, user_info.birthday from user_info
+    <select id="findAllOrders" resultMap="OrderVoMap">
+        SELECT user_info.username, user_info.email, user_info.gender, user_info.birthday
+        FROM user_info
     </select>
 
     <select id="findOrderMap" resultType="com.yhdemo.demo.pojo.Order">

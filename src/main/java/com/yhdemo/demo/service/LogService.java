@@ -9,5 +9,9 @@ import com.yhdemo.demo.pojo.SysLog;
  */
 public interface LogService {
 
+    /**
+     * 添加日志
+     * @param sysLog 日志类
+     */
     void addLog(SysLog sysLog);
 }

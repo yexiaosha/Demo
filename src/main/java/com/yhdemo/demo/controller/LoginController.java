@@ -1,12 +1,10 @@
 package com.yhdemo.demo.controller;
 
 import com.yhdemo.demo.pojo.param.LoginParam;
+import com.yhdemo.demo.pojo.vo.Result;
 import com.yhdemo.demo.service.LoginService;
 import com.yhdemo.demo.utils.aspects.SystemControllerLog;
-import com.yhdemo.demo.vo.Result;
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,15 +33,18 @@ public class LoginController {
      */
     @PostMapping("/login")
     @SystemControllerLog("用户登录")
-    @Transactional(rollbackFor = Exception.class)
-    public Result doLogin(@Validated @RequestBody LoginParam loginParam, HttpServletRequest request) {
-        Result result = loginService.doLogin(loginParam);
-        return result;
+    public Result<String> doLogin(@Validated @RequestBody LoginParam loginParam) {
+        return loginService.doLogin(loginParam);
     }
 
+    /**
+     * 用户登出
+     * @param token 令牌
+     * @return 是否完成登出
+     */
     @GetMapping("/logout")
     @SystemControllerLog("用户登出")
-    public Result logout(@RequestHeader("Authorization") String token){
+    public Result<Boolean> logout(@RequestHeader("Authorization") String token) {
         return loginService.logout(token);
     }
 }

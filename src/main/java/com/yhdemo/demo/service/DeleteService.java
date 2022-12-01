@@ -1,6 +1,6 @@
 package com.yhdemo.demo.service;
 
-import com.yhdemo.demo.vo.Result;
+import com.yhdemo.demo.pojo.vo.Result;
 
 /**
  * 删除用户接口
@@ -14,5 +14,5 @@ public interface DeleteService {
      * @param username 用户名
      * @return 通用返回
      */
-    Result deleteByUsername(String username);
+    Result<Boolean> deleteByUsername(String username);
 }

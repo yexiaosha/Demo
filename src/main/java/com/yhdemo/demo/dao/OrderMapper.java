@@ -3,7 +3,7 @@ package com.yhdemo.demo.dao;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yhdemo.demo.pojo.Order;
-import com.yhdemo.demo.vo.OrderVo;
+import com.yhdemo.demo.pojo.vo.OrderVo;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -32,10 +32,10 @@ public interface OrderMapper {
 
     /**
      * 分页查找用户所有订单
-     * @param username      用户名
+     * @param page 用户名
      * @return 订单列表
      */
-    IPage<OrderVo> findAllOrderByUsername(Page<OrderVo> page);
+    IPage<OrderVo> findAllOrders(Page<OrderVo> page);
 
     /**
      *

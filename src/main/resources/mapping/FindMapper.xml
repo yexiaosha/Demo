@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.yhdemo.demo.dao.FindMapper">
-    <select id="findAll" resultType="com.yhdemo.demo.vo.UserVo">
+    <select id="findAll" resultType="com.yhdemo.demo.pojo.vo.UserVo">
         SELECT user_info.username, email, gender, user_info.birthday, register_time
         FROM user_info
                  LEFT JOIN user_register_info

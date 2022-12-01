@@ -9,12 +9,13 @@ import com.yhdemo.demo.pojo.RegisterUser;
 import com.yhdemo.demo.pojo.SexEnum;
 import com.yhdemo.demo.pojo.User;
 import com.yhdemo.demo.pojo.param.RegisterParam;
+import com.yhdemo.demo.pojo.vo.ErrorCode;
+import com.yhdemo.demo.pojo.vo.RegisterUserVo;
+import com.yhdemo.demo.pojo.vo.Result;
 import com.yhdemo.demo.service.RegisterService;
 import com.yhdemo.demo.utils.DateUtils;
+import com.yhdemo.demo.utils.ResultUtils;
 import com.yhdemo.demo.utils.aspects.SystemServiceLog;
-import com.yhdemo.demo.vo.ErrorCode;
-import com.yhdemo.demo.vo.RegisterUserVo;
-import com.yhdemo.demo.vo.Result;
 import io.netty.util.internal.StringUtil;
 import java.util.ArrayList;
 import java.util.Date;
@@ -37,6 +38,8 @@ public class RegisterServiceImpl implements RegisterService {
     @Resource
     private LoginMapper loginMapper;
 
+    private List<ExcelCheckErr<?>> errList;
+
     /**
      * 注册
      * @param registerParams 注册信息
@@ -44,7 +47,7 @@ public class RegisterServiceImpl implements RegisterService {
      */
     @Override
     @SystemServiceLog("注册")
-    public Result register(RegisterParam registerParams) {
+    public Result<Boolean> register(RegisterParam registerParams) {
         String username = registerParams.getUsername();
         String password = registerParams.getPassword();
         String email = registerParams.getEmail();
@@ -55,11 +58,11 @@ public class RegisterServiceImpl implements RegisterService {
         if (StringUtils.isNullOrEmpty(username)
                 || StringUtils.isNullOrEmpty(password)
                 || StringUtils.isNullOrEmpty(email)) {
-            return Result.fail(ErrorCode.PARAMS_ERROR.getCode(), ErrorCode.PARAMS_ERROR.getMsg());
+            return ResultUtils.fail(ErrorCode.PARAMS_ERROR.getCode(), ErrorCode.PARAMS_ERROR.getMsg());
         }
 
         if (loginMapper.findUserByUsername(username) != null) {
-            return Result.fail(ErrorCode.ACCOUNT_HAS_EXIST.getCode(), ErrorCode.ACCOUNT_HAS_EXIST.getMsg());
+            return ResultUtils.fail(ErrorCode.ACCOUNT_HAS_EXIST.getCode(), ErrorCode.ACCOUNT_HAS_EXIST.getMsg());
         }
 
         User user = new User();
@@ -75,10 +78,10 @@ public class RegisterServiceImpl implements RegisterService {
         registerUser.setRegisterTime(registerTime);
 
         if (!(registerMapper.saveUser(user) && registerMapper.saveUserRegisterInfo(registerUser))) {
-            return Result.fail(ErrorCode.PARAMS_ERROR.getCode(), ErrorCode.PARAMS_ERROR.getMsg());
+            return ResultUtils.fail(ErrorCode.PARAMS_ERROR.getCode(), ErrorCode.PARAMS_ERROR.getMsg());
         }
 
-        return Result.success();
+        return ResultUtils.success();
     }
 
     /**
@@ -88,30 +91,27 @@ public class RegisterServiceImpl implements RegisterService {
      */
     @Override
     @SystemServiceLog("获取用户登录信息")
-    public Result getRegisterInfo(String username) {
+    public Result<RegisterUserVo> getRegisterInfo(String username) {
         if (loginMapper.findUserByUsername(username) == null) {
-            return Result.fail(ErrorCode.ACCOUNT_PWD_NOT_EXIST.getCode(), ErrorCode.ACCOUNT_PWD_NOT_EXIST.getMsg());
+            return ResultUtils.fail(ErrorCode.ACCOUNT_PWD_NOT_EXIST.getCode(),
+                    ErrorCode.ACCOUNT_PWD_NOT_EXIST.getMsg());
         }
 
         RegisterUserVo registerUserVo = copy(registerMapper.getRegisterInfo(username));
-        return Result.success(registerUserVo);
+        return ResultUtils.success(registerUserVo);
     }
 
     /**
      * 从表格上传用户
      * @param list 分段处理的用户列表
-     * @return 通用返回
      */
     @Override
     @SystemServiceLog("从表格上传用户")
-    public Result updateUsers(List<RegisterUser> list) {
+    public void updateUsers(List<RegisterUser> list) {
         for (RegisterUser user : list) {
             user.setRegisterTime(DateUtils.getPresentTime());
         }
-        if (!registerMapper.updateUsers(list)) {
-            return Result.fail(ErrorCode.PARAMS_ERROR.getCode(), ErrorCode.PARAMS_ERROR.getMsg());
-        }
-        return Result.success();
+        registerMapper.updateUsers(list);
     }
 
     public RegisterUserVo copy(RegisterUser registerUser) {
@@ -128,7 +128,7 @@ public class RegisterServiceImpl implements RegisterService {
      * @return 表格结果
      */
     @Override
-    public ExcelCheckResult checkImportExcel(List<RegisterUser> objects) {
+    public ExcelCheckResult<RegisterUser> checkImportExcel(List<RegisterUser> objects) {
         List<RegisterUser> successList = new ArrayList<>();
         List<ExcelCheckErr<RegisterUser>> errList = new ArrayList<>();
         for (RegisterUser user : objects) {
@@ -145,6 +145,8 @@ public class RegisterServiceImpl implements RegisterService {
                 errList.add(new ExcelCheckErr<>(user, errMsg.toString()));
             }
         }
-        return new ExcelCheckResult(successList, errList);
+        return new ExcelCheckResult<>(successList, errList);
     }
+
+
 }

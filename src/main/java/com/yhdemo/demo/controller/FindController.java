@@ -2,10 +2,11 @@ package com.yhdemo.demo.controller;
 
 
 import com.alibaba.excel.EasyExcel;
+import com.yhdemo.demo.pojo.PageData;
+import com.yhdemo.demo.pojo.vo.Result;
+import com.yhdemo.demo.pojo.vo.UserVo;
 import com.yhdemo.demo.service.FindService;
 import com.yhdemo.demo.utils.aspects.SystemControllerLog;
-import com.yhdemo.demo.vo.Result;
-import com.yhdemo.demo.vo.UserVo;
 import java.io.IOException;
 import java.net.URLEncoder;
 import javax.annotation.Resource;
@@ -28,7 +29,7 @@ public class FindController {
 
     @GetMapping("/listAll")
     @SystemControllerLog("查找所有用户信息")
-    public Result findAll() {
+    public Result<PageData<UserVo>> findAll() {
         return findService.findAll();
     }
 

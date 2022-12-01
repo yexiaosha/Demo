@@ -16,7 +16,7 @@ public class SexConverterToExcel implements Converter<SexEnum> {
 
 
     @Override
-    public Class supportJavaTypeKey() {
+    public Class<SexEnum> supportJavaTypeKey() {
         return null;
     }
 
@@ -27,20 +27,21 @@ public class SexConverterToExcel implements Converter<SexEnum> {
 
     @Override
     public SexEnum convertToJavaData(CellData cellData, ExcelContentProperty excelContentProperty,
-            GlobalConfiguration globalConfiguration) throws Exception {
-        String man = "男";
-        String woman = "女";
-        if (cellData.toString().equals(1) || man.equals(cellData.toString())) {
+            GlobalConfiguration globalConfiguration) {
+
+        if (cellData.getDataFormat().equals(SexEnum.MALE.getCode()) || SexEnum.MALE.getSex()
+                .equals(cellData.toString())) {
             return SexEnum.MALE;
-        } else if (cellData.toString().equals(2) || woman.equals(cellData.toString())) {
+        } else if (cellData.getDataFormat().equals(SexEnum.FEMALE.getCode()) || SexEnum.FEMALE.getSex()
+                .equals(cellData.toString())) {
             return SexEnum.FEMALE;
         }
         return null;
     }
 
     @Override
-    public CellData convertToExcelData(SexEnum sexEnum, ExcelContentProperty excelContentProperty,
-            GlobalConfiguration globalConfiguration) throws Exception {
-        return new CellData(sexEnum.getSex());
+    public CellData<SexEnum> convertToExcelData(SexEnum sexEnum, ExcelContentProperty excelContentProperty,
+            GlobalConfiguration globalConfiguration) {
+        return new CellData<>(sexEnum.getSex());
     }
 }

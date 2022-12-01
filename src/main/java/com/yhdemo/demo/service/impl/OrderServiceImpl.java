@@ -3,14 +3,16 @@ package com.yhdemo.demo.service.impl;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yhdemo.demo.dao.OrderMapper;
 import com.yhdemo.demo.pojo.Order;
+import com.yhdemo.demo.pojo.PageData;
 import com.yhdemo.demo.pojo.param.OrderParam;
+import com.yhdemo.demo.pojo.vo.ErrorCode;
+import com.yhdemo.demo.pojo.vo.OrderVo;
+import com.yhdemo.demo.pojo.vo.Result;
 import com.yhdemo.demo.service.OrderService;
 import com.yhdemo.demo.utils.DateUtils;
+import com.yhdemo.demo.utils.ResultUtils;
 import com.yhdemo.demo.utils.UUIDUtils;
 import com.yhdemo.demo.utils.aspects.SystemServiceLog;
-import com.yhdemo.demo.vo.ErrorCode;
-import com.yhdemo.demo.vo.OrderVo;
-import com.yhdemo.demo.vo.Result;
 import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,25 +33,25 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @SystemServiceLog("创建订单")
-    public Result createOrder(OrderParam orderParam) {
+    public Result<Boolean> createOrder(OrderParam orderParam) {
         Order order = paramToOrder(orderParam);
-        if (!orderMapper.insertOrder(order)){
-            return Result.fail(ErrorCode.PARAMS_ERROR.getCode(), ErrorCode.PARAMS_ERROR.getMsg());
+        if (!orderMapper.insertOrder(order)) {
+            return ResultUtils.fail(ErrorCode.PARAMS_ERROR.getCode(), ErrorCode.PARAMS_ERROR.getMsg());
         }
-        log.info("订单id：{}",order.getId());
-        return Result.success();
+        log.info("订单id：{}", order.getId());
+        return ResultUtils.success();
     }
 
     @Override
-    public Result findAllOrderByUsername(int pageNum, int pageSize) {
+    public Result<PageData<OrderVo>> findAllOrders(int pageNum, int pageSize) {
         Page<OrderVo> page = new Page<>(pageNum, pageSize);
-        return Result.success(orderMapper.findAllOrderByUsername(page).getRecords());
+        return ResultUtils.success(new PageData<>(orderMapper.findAllOrders(page), 1L));
     }
 
     @Override
-    public Result findAllOrders(int pageNum, int pageSize) {
+    public Result<PageData<OrderVo>> findAllOrdersByPage(int pageNum, int pageSize) {
         Page<OrderVo> page = new Page<>(pageNum, pageSize);
-        return Result.success(orderMapper.findAllOrderByPage(page).getRecords());
+        return ResultUtils.success(new PageData<>(orderMapper.findAllOrderByPage(page).getRecords()));
     }
 
 

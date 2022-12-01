@@ -1,4 +1,4 @@
-package com.yhdemo.demo.vo;
+package com.yhdemo.demo.pojo.vo;
 
 import lombok.Data;
 

@@ -2,7 +2,8 @@ package com.yhdemo.demo.service;
 
 import com.yhdemo.demo.pojo.RegisterUser;
 import com.yhdemo.demo.pojo.param.RegisterParam;
-import com.yhdemo.demo.vo.Result;
+import com.yhdemo.demo.pojo.vo.RegisterUserVo;
+import com.yhdemo.demo.pojo.vo.Result;
 import java.util.List;
 
 /**
@@ -17,19 +18,18 @@ public interface RegisterService extends ExcelCheckManager<RegisterUser> {
      * @param registerParams 登录信息
      * @return 通用返回对象
      */
-    Result register(RegisterParam registerParams);
+    Result<Boolean> register(RegisterParam registerParams);
 
     /**
      * 获取注册信息
      * @param username 用户名
      * @return 通用返回
      */
-    Result getRegisterInfo(String username);
+    Result<RegisterUserVo> getRegisterInfo(String username);
 
     /**
      * 批量上传用户信息
-     * @param list
-     * @return 通用返回
+     * @param list 用户表
      */
-    Result updateUsers(List<RegisterUser> list);
+    void updateUsers(List<RegisterUser> list);
 }

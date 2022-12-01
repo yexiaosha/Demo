@@ -4,11 +4,12 @@ import com.alibaba.fastjson.JSON;
 import com.yhdemo.demo.dao.LoginMapper;
 import com.yhdemo.demo.pojo.User;
 import com.yhdemo.demo.pojo.param.LoginParam;
+import com.yhdemo.demo.pojo.vo.ErrorCode;
+import com.yhdemo.demo.pojo.vo.Result;
 import com.yhdemo.demo.service.LoginService;
 import com.yhdemo.demo.utils.JwtUtils;
+import com.yhdemo.demo.utils.ResultUtils;
 import com.yhdemo.demo.utils.aspects.SystemServiceLog;
-import com.yhdemo.demo.vo.ErrorCode;
-import com.yhdemo.demo.vo.Result;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.Resource;
@@ -40,40 +41,41 @@ public class LoginServiceImpl implements LoginService {
      */
     @Override
     @SystemServiceLog("登录")
-    public Result doLogin(LoginParam loginParam) {
+    public Result<String> doLogin(LoginParam loginParam) {
         User user = copy(loginParam);
         if (loginMapper.findUserByUsername(user.getUsername()) == null) {
-            return Result.fail(ErrorCode.ACCOUNT_PWD_NOT_EXIST.getCode(), ErrorCode.ACCOUNT_PWD_NOT_EXIST.getMsg());
+            return ResultUtils.fail(ErrorCode.ACCOUNT_PWD_NOT_EXIST.getCode(),
+                    ErrorCode.ACCOUNT_PWD_NOT_EXIST.getMsg());
         }
 
         if (loginMapper.findUser(user.getUsername(), user.getPassword()) == null) {
-            return Result.fail(ErrorCode.ACCOUNT_PWD_ERROR.getCode(), ErrorCode.ACCOUNT_PWD_ERROR.getMsg());
+            return ResultUtils.fail(ErrorCode.ACCOUNT_PWD_ERROR.getCode(), ErrorCode.ACCOUNT_PWD_ERROR.getMsg());
         }
 
         String token = JwtUtils.createToken(user.getUsername());
         redisTemplate.opsForValue().set("TOKEN_"+token, JSON.toJSONString(user),1, TimeUnit.DAYS);
-        return new Result(true, "00000", "登陆成功", token);
+        return ResultUtils.success(token);
     }
 
     @Override
-    public LoginParam checkToken(String token){
+    public String checkToken(String token) {
         Map<String, Object> map = JwtUtils.verifyToken(token);
-        if (map == null){
+        if (map == null) {
             return null;
         }
         String userJson = redisTemplate.opsForValue().get("TOKEN_" + token);
-        if (!(StringUtils.hasText(userJson))){
+        if (!(StringUtils.hasText(userJson))) {
             return null;
         }
-        LoginParam loginParam = JSON.parseObject(userJson, LoginParam.class);
-        return loginParam;
+
+        return JSON.parseObject(userJson, LoginParam.class).getUsername();
     }
 
     @Override
     @SystemServiceLog("用户登出")
-    public Result logout(String token) {
-        redisTemplate.delete("TOKEN_"+token);
-        return Result.success();
+    public Result<Boolean> logout(String token) {
+        redisTemplate.delete("TOKEN_" + token);
+        return ResultUtils.success();
     }
 
     public User copy(LoginParam loginParam) {

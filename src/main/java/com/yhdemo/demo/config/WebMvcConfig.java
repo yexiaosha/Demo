@@ -34,6 +34,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registration.addPathPatterns("/**");
         registration.excludePathPatterns(
                 "/login",
-                "/register");
+                "/register",
+                "/swagger**/**",
+                "/webjars/**",
+                "/v3/**",
+                "/doc.html");
     }
 }
