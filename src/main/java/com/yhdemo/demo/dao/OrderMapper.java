@@ -25,8 +25,9 @@ public interface OrderMapper {
     boolean insertOrder(@Param("order") Order order);
 
     /**
-     *
-     * @return
+     * 分页对象
+     * @param page 页面
+     * @return 分页对象
      */
     IPage<OrderVo> findAllOrderByPage(Page<OrderVo> page);
 
@@ -38,9 +39,9 @@ public interface OrderMapper {
     IPage<OrderVo> findAllOrders(Page<OrderVo> page);
 
     /**
-     *
-     * @param username
-     * @return
+     * 分页查找用户所有订单方法2
+     * @param username 用户名
+     * @return 订单表
      */
     List<Order> findOrderMap(String username);
 }

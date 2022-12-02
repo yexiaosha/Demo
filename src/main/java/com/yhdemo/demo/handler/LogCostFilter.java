@@ -7,6 +7,7 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 /**
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
  */
 
 @Component
+@Slf4j
 public class LogCostFilter implements Filter {
 
     public static long time;
@@ -30,13 +32,8 @@ public class LogCostFilter implements Filter {
         long start = System.currentTimeMillis();
         chain.doFilter(request, response);
         time = System.currentTimeMillis() - start;
-        System.out.println("Execute cost=" + time);
+        log.info("该请求响应时间为= " + time + "毫秒");
 
-    }
-
-    @Override
-    public void destroy() {
-        Filter.super.destroy();
     }
 
 }

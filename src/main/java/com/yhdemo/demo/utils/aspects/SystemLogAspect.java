@@ -4,10 +4,10 @@ import com.alibaba.fastjson.JSON;
 import com.yhdemo.demo.pojo.SysLog;
 import com.yhdemo.demo.pojo.param.LoginParam;
 import com.yhdemo.demo.service.LogService;
-import com.yhdemo.demo.utils.DateUtils;
 import com.yhdemo.demo.utils.HttpContextUtils;
 import com.yhdemo.demo.utils.IpUtils;
 import com.yhdemo.demo.utils.JwtUtils;
+import java.util.Date;
 import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -85,7 +85,7 @@ public class SystemLogAspect {
             //存入数据库
             sysLog.setUsername(name);
             sysLog.setMethod((joinPoint.getTarget().getClass().getName() + "." + joinPoint.getSignature().getName()));
-            sysLog.setCreateDate(DateUtils.getPresentTime());
+            sysLog.setCreateDate(new Date());
             sysLog.setIp(IpUtils.getIpAddress(request));
             logger.info("请求时间：" + sysLog.getCreateDate());
             logService.addLog(sysLog);
@@ -135,7 +135,7 @@ public class SystemLogAspect {
             sysLog.setMethod(
                     (joinPoint.getTarget().getClass().getName() + "." + joinPoint.getSignature().getName() + "()"));
             sysLog.setParams(params.toString());
-            sysLog.setCreateDate(DateUtils.getPresentTime());
+            sysLog.setCreateDate(new Date());
             sysLog.setIp(IpUtils.getIpAddress(request));
             logService.addLog(sysLog);
         } catch (Exception ex) {

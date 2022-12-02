@@ -25,6 +25,3 @@ mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     cache-enabled: true
-uploadfile:
-  max-error-file: 100
-  max-load-data: 50

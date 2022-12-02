@@ -28,8 +28,11 @@
         <foreach collection="list" item="registerParam" separator=",">
             ( #{registerParam.username}, #{registerParam.password}, #{registerParam.gender}, #{registerParam.email},
             #{registerParam.birthday} )
+        </foreach>;
+    </insert>
 
-        </foreach>; INSERT INTO user_register_info(username, register_time, birthday)VALUES
+    <insert id="saveUsersRegisterInfo" parameterType="list">
+        INSERT INTO user_register_info(username, register_time, birthday)VALUES
         <foreach collection="list" item="registerParam" separator=",">
             ( #{registerParam.username}, #{registerParam.registerTime}, #{registerParam.birthday} )
         </foreach>

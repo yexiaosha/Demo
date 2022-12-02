@@ -12,13 +12,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 /**
- * 用户登录拦截器
+ * 授权拦截器
  * @author wyh
  * @date 2022/11/21 17:29
  */
 
 @Component
-public class UserLoginInterceptor implements HandlerInterceptor {
+public class AuthorizationInterceptor implements HandlerInterceptor {
 
     @Resource
     private LoginService loginService;

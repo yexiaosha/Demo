@@ -2,7 +2,6 @@ package com.yhdemo.demo.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.oas.annotations.EnableOpenApi;
 import springfox.documentation.spi.DocumentationType;
@@ -21,10 +20,10 @@ public class SwaggerConfig {
     public Docket docket() {
         return new Docket(DocumentationType.OAS_30)
                 .enable(true)
-                .groupName("YH")
+                .groupName("王雨航")
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.yhdemo.demo.controller"))
-                .paths(PathSelectors.ant("/controller/**"))
+                // .paths(PathSelectors.ant("/controller/**"))
                 .build();
     }
 }

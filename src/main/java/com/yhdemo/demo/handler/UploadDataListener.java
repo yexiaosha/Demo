@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 
 /**
  * 读取excel监听器
@@ -38,10 +37,9 @@ import org.springframework.beans.factory.annotation.Value;
 @EqualsAndHashCode(callSuper = false)
 public class UploadDataListener<T> extends AnalysisEventListener<T> {
 
-    @Value("${uploadfile.max-error-file}")
-    private static int BATCH_COUNT;
-    @Value("${uploadfile.max-load-data}")
-    private static int MAX_ERROR;
+
+    private static int BATCH_COUNT = 5;
+    private static int MAX_ERROR = 100;
 
     private List<T> successList = new ArrayList<>();
     private List<ExcelCheckErr<T>> errList = new ArrayList<>();
@@ -50,6 +48,8 @@ public class UploadDataListener<T> extends AnalysisEventListener<T> {
     private RegisterService registerService;
 
     private Class<T> clazz;
+
+    private int sign = 1;
 
     public UploadDataListener(RegisterService registerService) {
         this.registerService = registerService;
@@ -79,14 +79,18 @@ public class UploadDataListener<T> extends AnalysisEventListener<T> {
             successList.addAll(result.getSuccesses());
             errList.addAll(result.getErrs());
             saveData(successList);
+            successList.clear();
+            list.clear();
+        }
+
+        if (errList.size() >= MAX_ERROR) {
             try {
                 outPutErrorExcel(errList);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            successList.clear();
             errList.clear();
-            list.clear();
+            sign++;
         }
     }
 
@@ -96,7 +100,16 @@ public class UploadDataListener<T> extends AnalysisEventListener<T> {
         successList.addAll(result.getSuccesses());
         errList.addAll(result.getErrs());
         saveData(successList);
+
+        try {
+            outPutErrorExcel(errList);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         list.clear();
+        errList.clear();
+        successList.clear();
         log.info("所有数据解析完毕");
     }
 
@@ -121,7 +134,7 @@ public class UploadDataListener<T> extends AnalysisEventListener<T> {
         }
     }
 
-    private Map<Integer, String> getIndexNameMap(Class clazz) throws NoSuchFieldException {
+    private Map<Integer, String> getIndexNameMap(Class<?> clazz) throws NoSuchFieldException {
         Map<Integer, String> result = new HashMap<>(20);
         Field field;
         Field[] fields = clazz.getDeclaredFields();
@@ -152,16 +165,14 @@ public class UploadDataListener<T> extends AnalysisEventListener<T> {
 
 
     private void outPutErrorExcel(List<ExcelCheckErr<T>> errList) throws IOException {
-        OutputStream outputStream = new FileOutputStream("D:/Temp");
-        if (errList.size() >= MAX_ERROR) {
-            List<UserRegisterErr> excelErrs = errList.stream().map(excelCheckErr -> {
-                UserRegisterErr userRegisterErr = JSON.parseObject(JSON.toJSONString(excelCheckErr.getT()),
-                        UserRegisterErr.class);
-                userRegisterErr.setErrMsg(excelCheckErr.getErrMessage());
-                return userRegisterErr;
-            }).collect(Collectors.toList());
-            EasyExcel.write(outputStream, UserRegisterErr.class).sheet("错误信息表").doWrite(excelErrs);
-        }
+        OutputStream outputStream = new FileOutputStream("D:/Temp/Err0" + sign + ".xlsx");
+        List<UserRegisterErr> excelErrs = errList.stream().map(excelCheckErr -> {
+            UserRegisterErr userRegisterErr = JSON.parseObject(JSON.toJSONString(excelCheckErr.getT()),
+                    UserRegisterErr.class);
+            userRegisterErr.setErrMsg(excelCheckErr.getErrMessage());
+            return userRegisterErr;
+        }).collect(Collectors.toList());
+        EasyExcel.write(outputStream, UserRegisterErr.class).sheet("错误信息表").doWrite(excelErrs);
     }
 
 }

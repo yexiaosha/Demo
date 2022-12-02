@@ -20,7 +20,7 @@ public class JwtUtils {
     private static final String KEY = "yadea";
 
     public static String createToken(String username){
-        Map<String, Object> claims = new HashMap<>();
+        Map<String, Object> claims = new HashMap<>(20);
         claims.put("username", username);
         JwtBuilder jwtBuilder = Jwts.builder()
                 .signWith(SignatureAlgorithm.HS256, KEY)

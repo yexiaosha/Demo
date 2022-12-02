@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yhdemo.demo.dao.FindMapper;
 import com.yhdemo.demo.pojo.PageData;
+import com.yhdemo.demo.pojo.param.PageParam;
 import com.yhdemo.demo.pojo.vo.Result;
 import com.yhdemo.demo.pojo.vo.UserVo;
 import com.yhdemo.demo.service.FindService;
@@ -32,8 +33,8 @@ public class FindServiceImpl implements FindService {
      */
     @Override
     @SystemServiceLog("获取所有用户")
-    public Result<PageData<UserVo>> findAll() {
-        Page<UserVo> page = new Page<>(2, 3, true);
+    public Result<PageData<UserVo>> findAll(PageParam pageParam) {
+        Page<UserVo> page = new Page<>(pageParam.getCurrentPage(), pageParam.getPageSize(), true);
         IPage<UserVo> result = findMapper.findAll(page);
         return ResultUtils.success(new PageData<>(result.getRecords()));
     }

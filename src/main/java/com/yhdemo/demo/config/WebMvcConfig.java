@@ -1,6 +1,6 @@
 package com.yhdemo.demo.config;
 
-import com.yhdemo.demo.handler.UserLoginInterceptor;
+import com.yhdemo.demo.handler.AuthorizationInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -21,7 +21,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Bean
     public HandlerInterceptor getUserLoginInterceptor(){
-        return new UserLoginInterceptor();
+        return new AuthorizationInterceptor();
     }
 
     /**

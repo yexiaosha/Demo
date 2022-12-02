@@ -1,6 +1,8 @@
 package com.yhdemo.demo.pojo;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import java.util.List;
 import lombok.Data;
 
@@ -10,23 +12,28 @@ import lombok.Data;
  * @date 2022/12/01 11:08
  */
 @Data
+@ApiModel("分页对象")
 public class PageData<T> {
 
     /**
      * 总条数
      */
+    @ApiModelProperty("总条数")
     private Long total;
     /**
      * 总页数
      */
+    @ApiModelProperty("总页数")
     private Long totalPages;
     /**
      * 是否为最后一页
      */
+    @ApiModelProperty("是否为最后一页")
     private Boolean isLastPage;
     /**
      * 数据
      */
+    @ApiModelProperty("当前页面数据")
     private List<T> pageData;
 
     public PageData(IPage<T> pageData, Long page) {

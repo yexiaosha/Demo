@@ -4,6 +4,7 @@ import com.yhdemo.demo.pojo.RegisterUser;
 import com.yhdemo.demo.pojo.param.RegisterParam;
 import com.yhdemo.demo.pojo.vo.RegisterUserVo;
 import com.yhdemo.demo.pojo.vo.Result;
+import java.io.File;
 import java.util.List;
 
 /**
@@ -32,4 +33,6 @@ public interface RegisterService extends ExcelCheckManager<RegisterUser> {
      * @param list 用户表
      */
     void updateUsers(List<RegisterUser> list);
+
+    List<File> getErrFiles(String filePath, int sign);
 }

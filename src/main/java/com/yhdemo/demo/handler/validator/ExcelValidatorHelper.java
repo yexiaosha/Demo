@@ -26,7 +26,7 @@ public class ExcelValidatorHelper {
             for (ConstraintViolation<T> cv : set) {
                 Field declareField = obj.getClass().getDeclaredField(cv.getPropertyPath().toString());
                 ExcelProperty annotation = declareField.getAnnotation(ExcelProperty.class);
-                result.append(annotation.value()[0] + cv.getMessage()).append(";");
+                result.append(annotation.value()[0]).append(cv.getMessage()).append(";");
             }
         }
         return result.toString();

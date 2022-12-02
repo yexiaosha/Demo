@@ -1,5 +1,6 @@
 package com.yhdemo.demo.service.impl;
 
+import cn.hutool.core.date.DateUtil;
 import com.mysql.cj.util.StringUtils;
 import com.yhdemo.demo.dao.LoginMapper;
 import com.yhdemo.demo.dao.RegisterMapper;
@@ -13,14 +14,16 @@ import com.yhdemo.demo.pojo.vo.ErrorCode;
 import com.yhdemo.demo.pojo.vo.RegisterUserVo;
 import com.yhdemo.demo.pojo.vo.Result;
 import com.yhdemo.demo.service.RegisterService;
-import com.yhdemo.demo.utils.DateUtils;
 import com.yhdemo.demo.utils.ResultUtils;
 import com.yhdemo.demo.utils.aspects.SystemServiceLog;
 import io.netty.util.internal.StringUtil;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import javax.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 /**
@@ -30,6 +33,7 @@ import org.springframework.stereotype.Service;
  */
 
 @Service
+@Slf4j
 public class RegisterServiceImpl implements RegisterService {
 
     @Resource
@@ -37,8 +41,6 @@ public class RegisterServiceImpl implements RegisterService {
 
     @Resource
     private LoginMapper loginMapper;
-
-    private List<ExcelCheckErr<?>> errList;
 
     /**
      * 注册
@@ -52,7 +54,7 @@ public class RegisterServiceImpl implements RegisterService {
         String password = registerParams.getPassword();
         String email = registerParams.getEmail();
         SexEnum gender = SexEnum.valueOf(registerParams.getGender());
-        Date birthday = DateUtils.parseToDate(registerParams.getBirthday());
+        Date birthday = DateUtil.parseDate(registerParams.getBirthday());
         Date registerTime = registerParams.getRegisterTime();
 
         if (StringUtils.isNullOrEmpty(username)
@@ -109,16 +111,30 @@ public class RegisterServiceImpl implements RegisterService {
     @SystemServiceLog("从表格上传用户")
     public void updateUsers(List<RegisterUser> list) {
         for (RegisterUser user : list) {
-            user.setRegisterTime(DateUtils.getPresentTime());
+            user.setRegisterTime(new Date());
         }
         registerMapper.updateUsers(list);
+        registerMapper.saveUsersRegisterInfo(list);
+    }
+
+    @Override
+    public List<File> getErrFiles(String filePath, int sign) {
+        List<File> files = new LinkedList<>();
+
+        for (int i = 0; i < sign; i++) {
+            files.add(new File(filePath + "Err" + i + 1 + ".xlsx"));
+        }
+
+        return files;
+
+
     }
 
     public RegisterUserVo copy(RegisterUser registerUser) {
         RegisterUserVo registerUserVo = new RegisterUserVo();
         registerUserVo.setUsername(registerUser.getUsername());
-        registerUserVo.setRegisterTime(DateUtils.parseToString(registerUser.getRegisterTime()));
-        registerUserVo.setBirthday(DateUtils.parseToString(registerUser.getBirthday()));
+        registerUserVo.setRegisterTime(DateUtil.formatDateTime(registerUser.getRegisterTime()));
+        registerUserVo.setBirthday(DateUtil.formatDateTime(registerUser.getBirthday()));
         return registerUserVo;
     }
 

@@ -3,6 +3,10 @@ package com.yhdemo.demo.controller;
 import com.yhdemo.demo.pojo.vo.Result;
 import com.yhdemo.demo.service.DeleteService;
 import com.yhdemo.demo.utils.aspects.SystemControllerLog;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -20,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Validated
+@Api(tags = "删除操作")
 public class DeleteController {
 
     @Resource
@@ -32,6 +37,10 @@ public class DeleteController {
      */
     @DeleteMapping("/delete")
     @SystemControllerLog("根据用户名删除用户")
+    @ApiOperation(value = "根据用户名删除用户", notes = "返回是否成功JSON")
+    @ApiImplicitParams(
+            @ApiImplicitParam(value = "用户名", name = "username")
+    )
     public Result<Boolean> deleteUserByUsername(
             @Valid @NotBlank @Size(max = 20, min = 3) @RequestParam String username) {
         return deleteService.deleteByUsername(username);

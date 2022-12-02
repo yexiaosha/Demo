@@ -1,6 +1,7 @@
 package com.yhdemo.demo.service;
 
 import com.yhdemo.demo.pojo.PageData;
+import com.yhdemo.demo.pojo.param.PageParam;
 import com.yhdemo.demo.pojo.vo.Result;
 import com.yhdemo.demo.pojo.vo.UserVo;
 import java.util.List;
@@ -17,7 +18,7 @@ public interface FindService {
      * 获取所有用户接口
      * @return 通用结果
      */
-    Result<PageData<UserVo>> findAll();
+    Result<PageData<UserVo>> findAll(PageParam pageParam);
 
     /**
      * 获取所有用户输出表格文件

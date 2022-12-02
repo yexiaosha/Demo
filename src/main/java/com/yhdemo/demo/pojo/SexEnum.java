@@ -2,6 +2,7 @@ package com.yhdemo.demo.pojo;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonValue;
+import io.swagger.annotations.ApiModel;
 import lombok.Getter;
 
 /**
@@ -10,6 +11,7 @@ import lombok.Getter;
  * @date 2022/11/22 11:17
  */
 @Getter
+@ApiModel("性别枚举")
 public enum SexEnum {
     /**
      * 性别

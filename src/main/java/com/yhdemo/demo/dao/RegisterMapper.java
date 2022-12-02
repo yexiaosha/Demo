@@ -43,4 +43,6 @@ public interface RegisterMapper {
      */
     boolean updateUsers(List<RegisterUser> list);
 
+    boolean saveUsersRegisterInfo(List<RegisterUser> list);
+
 }

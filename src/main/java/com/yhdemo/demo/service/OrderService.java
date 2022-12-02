@@ -2,6 +2,7 @@ package com.yhdemo.demo.service;
 
 import com.yhdemo.demo.pojo.PageData;
 import com.yhdemo.demo.pojo.param.OrderParam;
+import com.yhdemo.demo.pojo.param.PageParam;
 import com.yhdemo.demo.pojo.vo.OrderVo;
 import com.yhdemo.demo.pojo.vo.Result;
 
@@ -21,11 +22,10 @@ public interface OrderService {
 
     /**
      * 分页查找
-     * @param pageNum  分页查找
-     * @param pageSize 分页查找
+     * @param pageParam 分页参数
      * @return 通用返回结果
      */
-    Result<PageData<OrderVo>> findAllOrders(int pageNum, int pageSize);
+    Result<PageData<OrderVo>> findAllOrders(PageParam pageParam);
 
     /**
      * 分页查找
